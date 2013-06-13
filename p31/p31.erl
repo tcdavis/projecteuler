@@ -1,10 +1,10 @@
 -module(p31).
 
 -export([checkSwap/2]).
--export([startlist/0]).
+-export([startlist/1]).
 -export([trySwap/2]).
 -export([recurse/2]).
--export([start/0]).
+-export([start/1]).
 
 checkSwap(CoinSet, CoinVal) ->
     AllOnes = lists:duplicate(CoinVal, 1),
@@ -16,10 +16,11 @@ checkSwap(CoinSet, CoinVal) ->
             false
     end.
 
+
 trySwap(CoinSet, CoinNum) ->
     Coins = [2, 5, 10, 20, 50, 100, 200],
-    SwapOK = checkSwap(CoinSet, lists:nth(CoinNum, Coins)),
     CoinVal = lists:nth(CoinNum, Coins),
+    SwapOK = checkSwap(CoinSet, CoinVal),
     if
        SwapOK ->
             lists:append(lists:nthtail(CoinVal, CoinSet), [CoinVal]);
@@ -29,18 +30,22 @@ trySwap(CoinSet, CoinNum) ->
 
 
 recurse(CoinSet, CoinNum) ->
-    SwapThis = trySwap(CoinSet, CoinNum),
-    if
-        SwapThis == [] ->
+    if 
+        CoinNum > 7 ->
             1;
         true ->
-            1 + 
-            recurse(SwapThis, CoinNum) + 
-            recurse(CoinSet, CoinNum + 1)
+            SwapThis = trySwap(CoinSet, CoinNum),
+            if
+                SwapThis == [] ->
+                    1;
+                true ->
+                    recurse(SwapThis, CoinNum) + 
+                    recurse(CoinSet, CoinNum + 1)
+            end
     end.
 
-startlist() ->
-    lists:duplicate(5, 1).
+startlist(N) ->
+    lists:duplicate(N, 1).
 
-start() ->
-    recurse(startlist(), 1).
+start(N) ->
+    recurse(startlist(N), 1).
